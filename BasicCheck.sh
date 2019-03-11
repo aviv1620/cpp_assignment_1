@@ -1,27 +1,32 @@
 #!/bin/bash
-ans=0;#0 to 7
 
-cd $1
-make
-makeVal=$?
+ans=0;#0 to 7
+path=$1
+prog=$2
+shift
+shift
+
+cd $path
 
 #Compilation and file exist test
-if [ $makeVal -eq 2 ]; then
-	# not have make file or compilation fail
+make
+if [ $? -eq 2 ]; then
 	ans=$(( $ans | 4 ))
 fi 
 
 # Memory leaks test
-valgrind  --leak-check=full --error-exitcode=10 --tool=memcheck --log-file="devnull" $2 $3 $4 $5 $6 $7 $8 $9 > devnull
+valgrind  --leak-check=full --error-exitcode=10 --tool=memcheck --log-file="/dev/null" $prog $@ > /dev/null
 if [ $? -eq 10 ]; then
 	ans=$(( $ans | 2 ))
 fi
 
 # Thread race test
-valgrind --tool=helgrind --error-exitcode=10 --log-file="devnull" $2 $3 $4 $5 $6 $7 $8 $9
+valgrind --tool=helgrind --error-exitcode=10 --log-file="/dev/null" $prog $@
 if [ $? -eq 10 ]; then
 	ans=$(( $ans | 1 ))		
 fi
+
+
 
 #print and exit
 echo  
@@ -46,5 +51,7 @@ else
 	echo -n	"	PASS"
 fi
 
+
+#exit
 echo  
 exit $ans
