@@ -1,0 +1,16 @@
+﻿http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
+
+http://www.it.uc3m.es/pbasanta/asng/course_notes/helgrind_tool_en.html
+
+https://superuser.com/questions/271986/execute-a-command-from-another-directory-in-bash
+
+https://stackoverflow.com/questions/8355979/how-to-redirect-valgrinds-output-to-a-file
+זליגת זיכרון
+valgrind --tool=memcheck --error-exitcode=10 ./a.out
+
+תרד רץ
+valgrind --tool=helgrind --error-exitcode=10 ./a.out
+
+ביצוע קובץ סקריפט
+chmod +x BasicCheck.sh
+./BasicCheck.sh no_exist ./a.out
