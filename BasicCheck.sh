@@ -8,23 +8,26 @@ shift
 
 cd $path
 
-#Compilation and file מםא exist test
+#Compilation and file exist test
 make
 if [ $? -eq 2 ]; then
-	exit 7;
-fi 
+	ans=$(( $ans | 7 ))
+else 
 
-# Memory leaks test
-valgrind  --leak-check=full --error-exitcode=10 --tool=memcheck --log-file="/dev/null" ./$prog $@ > /dev/null
-if [ $? -eq 10 ]; then
-	ans=$(( $ans | 2 ))
+	# Memory leaks test
+	valgrind  --leak-check=full --error-exitcode=10 --tool=memcheck --log-file="/dev/null" ./$prog $@ > /dev/null
+	if [ $? -eq 10 ]; then
+		ans=$(( $ans | 2 ))
+	fi
+
+	# Thread race test
+	valgrind --tool=helgrind --error-exitcode=10 --log-file="/dev/null" ./$prog $@
+	if [ $? -eq 10 ]; then
+		ans=$(( $ans | 1 ))		
+	fi
+
 fi
 
-# Thread race test
-valgrind --tool=helgrind --error-exitcode=10 --log-file="/dev/null" ./$prog $@
-if [ $? -eq 10 ]; then
-	ans=$(( $ans | 1 ))		
-fi
 
 
 
